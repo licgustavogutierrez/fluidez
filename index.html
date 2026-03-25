@@ -2,41 +2,74 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Fondo con Imagen</title>
+    <title>Texto por Voz</title>
 
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-
-            /* Imagen de fondo */
-            background-image: url('https://picsum.photos/1600/900');
-
-            /* Ajustes del fondo */
-            background-size: cover;       /* Cubre toda la pantalla */
-            background-position: center;  /* Centrada */
-            background-repeat: no-repeat; /* No repetir */
-
-            /* Centrar contenido */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
             font-family: Arial, sans-serif;
+            background: #1e1e1e;
             color: white;
+            text-align: center;
+            padding: 50px;
         }
 
-        h1 {
-            background: rgba(0,0,0,0.5);
-            padding: 20px;
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
             border-radius: 10px;
+            background: #00c853;
+            color: white;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 80%;
+            height: 200px;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
 
-    <h1>Bienvenido a mi sitio</h1>
+    <h1>🎤 Escribir con la voz</h1>
+
+    <button onclick="iniciarReconocimiento()">Hablar</button>
+
+    <br>
+
+    <textarea id="texto" placeholder="El texto aparecerá aquí..."></textarea>
+
+    <script>
+        function iniciarReconocimiento() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+            if (!SpeechRecognition) {
+                alert("Tu navegador no soporta reconocimiento de voz");
+                return;
+            }
+
+            const recognition = new SpeechRecognition();
+
+            recognition.lang = "es-ES"; // Español
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            recognition.start();
+
+            recognition.onresult = function(event) {
+                const texto = event.results[0][0].transcript;
+                document.getElementById("texto").value += texto + " ";
+            };
+
+            recognition.onerror = function(event) {
+                alert("Error: " + event.error);
+            };
+        }
+    </script>
 
 </body>
 </html>
