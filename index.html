@@ -2,19 +2,19 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Texto por Voz</title>
+    <title>Voz + Contador de Palabras</title>
 
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: #1e1e1e;
+            background: #121212;
             color: white;
             text-align: center;
-            padding: 50px;
+            padding: 40px;
         }
 
         button {
-            padding: 15px 30px;
+            padding: 15px 25px;
             font-size: 18px;
             border: none;
             border-radius: 10px;
@@ -30,18 +30,27 @@
             border-radius: 10px;
             padding: 15px;
             font-size: 16px;
+            margin-top: 10px;
+        }
+
+        #contador {
+            margin-top: 15px;
+            font-size: 20px;
+            color: #00e676;
         }
     </style>
 </head>
 <body>
 
-    <h1>🎤 Escribir con la voz</h1>
+    <h1>🎤 Voz + Contador de Palabras</h1>
 
     <button onclick="iniciarReconocimiento()">Hablar</button>
 
     <br>
 
-    <textarea id="texto" placeholder="El texto aparecerá aquí..."></textarea>
+    <textarea id="texto" placeholder="El texto aparecerá aquí..." oninput="contarPalabras()"></textarea>
+
+    <div id="contador">Palabras: 0</div>
 
     <script>
         function iniciarReconocimiento() {
@@ -54,7 +63,7 @@
 
             const recognition = new SpeechRecognition();
 
-            recognition.lang = "es-ES"; // Español
+            recognition.lang = "es-ES";
             recognition.continuous = false;
             recognition.interimResults = false;
 
@@ -62,14 +71,30 @@
 
             recognition.onresult = function(event) {
                 const texto = event.results[0][0].transcript;
-                document.getElementById("texto").value += texto + " ";
+                const area = document.getElementById("texto");
+
+                area.value += texto + " ";
+                contarPalabras();
             };
 
             recognition.onerror = function(event) {
                 alert("Error: " + event.error);
             };
         }
+
+        function contarPalabras() {
+            const texto = document.getElementById("texto").value.trim();
+
+            if (texto === "") {
+                document.getElementById("contador").innerText = "Palabras: 0";
+                return;
+            }
+
+            const palabras = texto.split(/\s+/);
+            document.getElementById("contador").innerText = "Palabras: " + palabras.length;
+        }
     </script>
 
 </body>
 </html>
+               
