@@ -111,11 +111,11 @@
                     coincidencias++;
                 }
                 
-            } coincidencias++;
+            } 
                            );
 
             document.getElementById("resultado").innerHTML = `
-                Palabras dichas: ${usuario.length} <br>
+                Palabras dichas: ${usuario.length-1} <br>
                 Coincidencias: ${coincidencias} <br>
                 Precisión: ${Math.round((coincidencias / base.length) * 100)}%
             `;
