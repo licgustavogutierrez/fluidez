@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Comparador con Tiempo</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    text-align: center;
+    padding: 30px;
+}
+
+.box {
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 15px;
+    margin: 20px auto;
+    max-width: 700px;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    background: #00c9a7;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.correcta { color: #00ff9d; font-weight: bold; }
+.incorrecta { color: #ff4d4d; font-weight: bold; }
+
+#tiempo {
+    font-size: 22px;
+    margin-top: 10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>🎤 Comparador con Tiempo</h1>
+
+<div id="tiempo">⏱️ Tiempo: 60</div>
+
+<div class="box">
+    <h3>📘 Texto base:</h3>
+    <p id="textoBase">
+        La programación es una herramienta poderosa para crear soluciones digitales
+    </p>
+</div>
+
+<div class="box">
+    <h3>🎙 Texto reconocido:</h3>
+    <p id="textoVoz">Presiona el botón y habla...</p>
+</div>
+
+<button onclick="iniciarReconocimiento()">🎤 Hablar</button>
+<button onclick="compararTextos()">📊 Comparar</button>
+
+<div class="box">
+    <h3>📊 Resultado:</h3>
+    <p id="resultado"></p>
+</div>
+
+<script>
+let textoReconocido = "";
+let reconocimiento;
+let tiempoRestante = 60;
+let intervalo;
+
+function iniciarReconocimiento() {
+    reconocimiento = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    reconocimiento.lang = "es-ES";
+
+    textoReconocido = "";
+    tiempoRestante = 60;
+    document.getElementById("tiempo").innerText = "⏱️ Tiempo: " + tiempoRestante;
+
+    reconocimiento.onresult = function(event) {
+        textoReconocido += " " + event.results[0][0].transcript;
+        document.getElementById("textoVoz").innerText = textoReconocido;
+    };
+
+    reconocimiento.start();
+
+    // ⏱️ Temporizador
+    intervalo = setInterval(() => {
+        tiempoRestante--;
+        document.getElementById("tiempo").innerText = "⏱️ Tiempo: " + tiempoRestante;
+
+        if (tiempoRestante <= 0) {
+            clearInterval(intervalo);
+            reconocimiento.stop();
+            document.getElementById("tiempo").innerText = "⏰ Tiempo finalizado";
+        }
+    }, 1000);
+}
+
+function compararTextos() {
+    const base = document.getElementById("textoBase").innerText.toLowerCase();
+    const voz = textoReconocido.toLowerCase();
+
+    const palabrasBase = base.split(/\s+/);
+    const palabrasVoz = voz.split(/\s+/);
+
+    let resultadoHTML = "";
+    let coincidencias = 0;
+
+    palabrasBase.forEach(palabra => {
+        if (palabrasVoz.includes(palabra)) {
+            resultadoHTML += `<span class="correcta">${palabra}</span> `;
+            coincidencias++;
+        } else {
+            resultadoHTML += `<span class="incorrecta">${palabra}</span> `;
+        }
+    });
+
+    document.getElementById("resultado").innerHTML = `
+        ${resultadoHTML}
+        <br><br>
+        Coincidencias: ${coincidencias} de ${palabrasBase.length}
+    `;
+}
+</script>
+
+</body>
+</html>
